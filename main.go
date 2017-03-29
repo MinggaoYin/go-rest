@@ -5,9 +5,14 @@ import (
 	"net/http"
 
 	"go-rest/handlers"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
-	http.HandleFunc("/", handlers.Welcome)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	router := httprouter.New()
+
+	router.GET("/", handlers.Welcome)
+
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
