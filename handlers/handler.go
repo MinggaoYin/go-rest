@@ -1,7 +1,11 @@
 package handlers
 
-import "net/http"
+import (
+	"net/http"
 
-func Welcome(w http.ResponseWriter, r *http.Request) {
+	"github.com/julienschmidt/httprouter"
+)
+
+func Welcome(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Write([]byte("Hello world!\n"))
 }
