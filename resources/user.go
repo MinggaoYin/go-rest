@@ -11,6 +11,17 @@ type UserContainer struct {
 	users map[string]*User
 }
 
+func (uc *UserContainer) Get(id string) *User {
+	uc.lock.RLock()
+	defer uc.lock.RUnlock()
+
+	user, present := uc.users[id]
+	if !present {
+		return nil
+	}
+	return user
+}
+
 func (uc *UserContainer) AllUsers() []*User {
 	uc.lock.RLock()
 	defer uc.lock.RUnlock()
@@ -46,7 +57,7 @@ func init() {
 }
 
 type User struct {
-	Id    string `json:"string"`
+	Id    string `json:"id"`
 	Name  string `json:"name"`
 	Age   int    `json:"age"`
 	Email string `json:"email"`
@@ -69,6 +80,32 @@ func AddUser(name string, age int, email string) *User {
 
 func RemoveUser(id string) {
 	userContainer.Remove(id)
+}
+
+func GetUser(id string) (*User, error) {
+	user := userContainer.Get(id)
+	if user == nil {
+		return nil, ErrNotFound
+	}
+	return user, nil
+}
+
+func UpdateUser(id string, fields map[string]interface{}) (*User, error) {
+	user := userContainer.Get(id)
+	if user == nil {
+		return nil, ErrNotFound
+	}
+	if name, present := fields["name"]; present {
+		user.Name = name.(string)
+	}
+	if age, present := fields["age"]; present {
+		user.Age = int(age.(float64))
+	}
+	if email, present := fields["email"]; present {
+		user.Email = email.(string)
+	}
+	userContainer.Add(user)
+	return user, nil
 }
 
 func ListUsers() []*User {
