@@ -16,7 +16,7 @@ const (
 var src = rand.NewSource(time.Now().UnixNano())
 
 func RandomString(n int) string {
-	randStringBytesMaskImprSrc(n)
+	return randStringBytesMaskImprSrc(n)
 }
 
 func randStringBytesMaskImprSrc(n int) string {
